@@ -58,6 +58,7 @@ const role = sessionStorage.getItem("pendingRole");
   sessionStorage.setItem("city", city);
   sessionStorage.setItem("pendingEmail", email);
   sessionStorage.setItem("pendingPassword", password);
+  sessionStorage.setItem("description", document.getElementById("description").value);
     // Cake 
   if (ownerType === "cake") {
   const userObj = {
@@ -195,6 +196,23 @@ const role = sessionStorage.getItem("pendingRole");
         <option value="DJ">DJ</option>
         <option value="decoration">Decoration</option>
       </select>
+{/* description */}
+<label style={{ marginTop: "1rem", display: "block" }}>
+  <strong>Description (HTML allowed):</strong>
+</label>
+<textarea
+  placeholder="Write the description that will show to the user about your business..."
+ id="description"
+  rows={5}
+  style={{
+    width: "100%",
+    padding: "0.7rem",
+    marginTop: "0.5rem",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+    fontFamily: "monospace"
+  }}
+/>
 
       {/* next button */}
       <button
