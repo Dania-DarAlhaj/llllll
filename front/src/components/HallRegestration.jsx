@@ -11,45 +11,43 @@ export default function HallRegistration() {
   const [womenCapacity, setWomenCapacity] = useState("");
   const [hallInfo, setHallInfo] = useState(null);
 
+  // Store image names locally before inserting to DB
+  const [imageNames, setImageNames] = useState([]);
+  const [currentImage, setCurrentImage] = useState(null);
+
+  // Get business info from session storage
   const name = sessionStorage.getItem("businessName");
   const phone = sessionStorage.getItem("phone");
   const city = sessionStorage.getItem("city");
   const description = sessionStorage.getItem("description");
 
+  // Add selected image name to the list
+  const addImageName = () => {
+    if (!currentImage) {
+      alert("Please select an image first.");
+      return;
+    }
+
+    setImageNames([...imageNames, currentImage.name]); // Add current image name to array
+    setCurrentImage(null); // Reset file input
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate required fields
     if (!email || !password || !hallType || !menCapacity || !womenCapacity || !description) {
       alert("Please complete all fields.");
       return;
     }
 
-    // رفع الصورة على السيرفر المحلي
-    const fileInput = document.getElementById("hallImage");
-    const file = fileInput.files[0];
-    let imageName = "";
-
-    if (file) {
-      const formData = new FormData();
-      formData.append("hallImage", file);
-
-      try {
-        const res = await fetch("http://localhost:5000/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        imageName = data.fileName; // اسم الملف الذي سيتم تخزينه في قاعدة البيانات
-        console.log("Image uploaded successfully:", imageName);
-      } catch (err) {
-        console.error("Image upload error:", err);
-        alert("Error uploading image. Check console.");
-        return;
-      }
+    if (imageNames.length === 0) {
+      alert("Please add at least one image name.");
+      return;
     }
 
     try {
-      // إضافة المستخدم
+      // Insert user
       const { data: userData, error: userError } = await supabase
         .from("users")
         .insert([{
@@ -67,14 +65,14 @@ export default function HallRegistration() {
       const userId = userData[0].id;
       console.log("User Inserted:", userData);
 
-      // إضافة المالك
+      // Insert owner
       const { data: ownerData, error: ownerError } = await supabase
         .from("owners")
         .insert([{
           user_id: userId,
           owner_type: "hall",
           visible: false,
-          describtion: description,
+          description: description,
           rate: 0,
           accept: false
         }])
@@ -84,8 +82,11 @@ export default function HallRegistration() {
       const ownerId = ownerData[0].owner_id;
       console.log("Owner Inserted:", ownerData);
 
-      // إضافة القاعة
-      const hallPrice = parseFloat(document.getElementById("hallPrice").value);
+      // Insert hall
+      const hallPrice = parseFloat(
+        document.getElementById("hallPrice").value || 0
+      );
+
       const { data: hallData, error: hallError } = await supabase
         .from("hall")
         .insert([{
@@ -95,7 +96,7 @@ export default function HallRegistration() {
           men_capacity: parseInt(menCapacity),
           women_capacity: parseInt(womenCapacity),
           price: hallPrice,
-          imageurl: imageName // الاسم فقط وليس الرابط الكامل
+          imgurl: imageNames.join(",") // Store image names as comma-separated string
         }])
         .select();
 
@@ -104,7 +105,7 @@ export default function HallRegistration() {
 
       setHallInfo(hallData[0]);
       alert("Hall registered successfully!");
-
+      setImageNames([]); // Reset image names after submission
     } catch (err) {
       console.error("Registration error:", err);
       alert("Error registering hall. Check console for details.");
@@ -160,12 +161,26 @@ export default function HallRegistration() {
           <label>Price:</label>
           <input type="number" min="0" id="hallPrice" placeholder="Enter hall price" />
 
-          <label>Upload Hall Image:</label>
-          <input type="file" id="hallImage" accept="image/*" />
+          <label>Upload Hall Images:</label>
+          <input type="file" accept="image/*" onChange={(e) => setCurrentImage(e.target.files[0])} />
+          <button type="button" onClick={addImageName}>Add Image Name</button>
 
-          <button type="submit">Register Hall</button>
+          {/* Display added image names */}
+          <div style={{ marginTop: "0.5rem" }}>
+            {imageNames.length > 0 && (
+              <>
+                <strong>Selected Images:</strong>
+                <ul>
+                  {imageNames.map((name, index) => <li key={index}>{name}</li>)}
+                </ul>
+              </>
+            )}
+          </div>
+
+          <button type="submit" style={{ marginTop: "1rem" }}>Register Hall</button>
         </form>
 
+        {/* Display registered hall info */}
         {hallInfo && (
           <div style={{ marginTop: "2rem", padding: "1rem", background: "#f2f2f2", borderRadius: "5px" }}>
             <h3>Hall Information</h3>
@@ -175,7 +190,7 @@ export default function HallRegistration() {
             <p><strong>Men Capacity:</strong> {hallInfo.men_capacity}</p>
             <p><strong>Women Capacity:</strong> {hallInfo.women_capacity}</p>
             <p><strong>Owner ID:</strong> {hallInfo.owner_id}</p>
-            <img src={`/Img/${hallInfo.imageurl}`} alt="Hall" style={{ width: "100%", marginTop: "1rem" }} />
+            <p><strong>Images:</strong> {hallInfo.imgurl}</p>
           </div>
         )}
       </div>

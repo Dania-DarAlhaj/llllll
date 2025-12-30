@@ -1,135 +1,129 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+import "../style/LoginPage.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (email === "admin@gmail.com" && password === "admin") {
-    navigate("/AdminPage");
-    return; 
-  }
-    navigate("/user", {
-      state: {
-        email: email,
-        password: password,
-      },
-    });
+    // 🟢 Admin ثابت
+    if (email === "admin@weddingplanning.com" && password === "admin") {
+      alert("Welcome Admin 👑");
+      navigate("/AdminPage");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // 🔍 تحقق من المستخدم
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("id, email, role")
+        .eq("email", email)
+        .eq("password", password)
+        .single();
+
+      if (error || !user) {
+        alert("Invalid email or password ❌");
+        setIsLoading(false);
+        return;
+      }
+
+      // 🧭 توجيه حسب الدور
+      if (user.role === "user") {
+     
+        
+    sessionStorage.setItem("currentEmail", email);
+   alert("Login successfully 🎉");
+  
+        navigate("/");
+      } 
+      else if (user.role === "owner") {
+        alert("Welcome Owner 👑");
+        navigate("/OwnerPage", {
+          state: { email: user.email },
+        });
+      } 
+      else {
+        alert("Unknown role ❗");
+      }
+
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong");
+    }
+
+    setIsLoading(false);
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-        background: "#FAF8F5",
-        fontFamily: "Lato, sans-serif",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          background: "white",
-          padding: "2rem",
-          borderRadius: "10px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          width: "350px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-      >
-        <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Login</h2>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1 className="login-title">Welcome Back</h1>
+          <p className="login-subtitle">Sign in to continue</p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{
-            padding: "0.8rem",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            fontSize: "1rem",
-          }}
-        />
+        <form onSubmit={handleSubmit}>
+          {/* EMAIL */}
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-input"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        {/* Password */}
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{
-            padding: "0.8rem",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            fontSize: "1rem",
-          }}
-        />
+          {/* PASSWORD */}
+          <div className="form-group">
+            <label>Password</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-input"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
 
-        {/* Login Button */}
-        <button
-          type="submit"
-          style={{
-            padding: "0.8rem",
-            borderRadius: "5px",
-            border: "none",
-            background: "#C9A27C",
-            color: "white",
-            fontSize: "1rem",
-            cursor: "pointer",
-            transition: "0.2s",
-          }}
-        >
-          Login
-        </button>
+          {/* LOGIN BUTTON */}
+          <button type="submit" className="btn-login" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Log In"}
+          </button>
 
-        {/* forgot password */}
-        <button
-          type="button"
-          onClick={() => navigate("/forgot-password")}
-          style={{
-            padding: "0.5rem",
-            borderRadius: "5px",
-            border: "none",
-            background: "transparent",
-            color: "#C9A27C",
-            fontSize: "0.9rem",
-            cursor: "pointer",
-            textDecoration: "underline",
-          }}
-        >
-          Forgot Password?
-        </button>
-
-        {/* RegistrationPage */}
-        <button
-          type="button"
-          onClick={() => navigate("/RegistrationPage")}
-          style={{
-            padding: "0.8rem",
-            borderRadius: "5px",
-            border: "1px solid #C9A27C",
-            background: "white",
-            color: "#C9A27C",
-            fontSize: "1rem",
-            cursor: "pointer",
-            transition: "0.2s",
-          }}
-        >
-          RegistrationPage
-        </button>
-      </form>
+          {/* REGISTER */}
+          <button
+            type="button"
+            className="btn-register"
+            onClick={() => navigate("/RegistrationPage")}
+          >
+            Create New Account
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

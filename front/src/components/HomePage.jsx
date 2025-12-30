@@ -2,9 +2,18 @@ import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
-
+import { useState } from 'react';
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleLogout = () => {
+  sessionStorage.clear(); // أو removeItem("email")
+  setIsLoggedIn(false);
+  navigate("/login");
+};
+
   useEffect(() => {
+     setIsLoggedIn(!!sessionStorage.getItem("currentEmail"));
+     
     const css = `
     :root{ 
       --primary: #8B7355;
@@ -878,6 +887,7 @@ export default function HomePage() {
       } else {
         navbar.classList.remove('navbar-scrolled');
       }
+      
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -886,6 +896,7 @@ export default function HomePage() {
       const el = document.getElementById('wps-homepage-styles');
       if (el) el.remove();
       window.removeEventListener('scroll', handleScroll);
+      
     };
   }, []);
 const navigate = useNavigate();
@@ -1012,6 +1023,15 @@ const navigate = useNavigate();
               <li className="nav-item"><a className="nav-link" href="#how-it-works">How It Works</a></li>
               <li className="nav-item"><a className="nav-link" href="#testimonials">Reviews</a></li>
               <button className="btn btn-primary-custom" onClick={() => navigate("/login")}>Log in</button>
+              {/* زر Login / Logout */}
+              <li className="nav-item">
+                <button
+                  className="btn btn-primary-custom"
+                  onClick={isLoggedIn ? handleLogout : () => navigate("/login")}
+                >
+                  {isLoggedIn ? "Logout" : "Log in"}
+                </button>
+              </li>
             </ul>
           </div>
         </div>

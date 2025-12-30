@@ -13,6 +13,8 @@ import RegistrationPage from "./components/RegistrationPage";
 import VerifyPage from "./components/VerifyPage";
 import OwnerPage from "./components/OwnerPage";
 import HallRegestration from "./components/HallRegestration";
+import VenueDetails from "./components/VenueDetails";
+import UserPage from "./components/UserPage";
 function App() {
   return (
     <Routes>
@@ -29,6 +31,9 @@ function App() {
       <Route path="/VerifyPage" element={<VerifyPage />} />
       <Route path="/OwnerPage" element={<OwnerPage />} />
       <Route path="/HallRegestration" element={<HallRegestration />} />
+   <Route path="/venue/:userId" element={<VenueDetails />} />
+      <Route path="/UserPage" element={<UserPage />} />
+
     </Routes>
   );
 }

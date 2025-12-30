@@ -16,7 +16,7 @@ export default function VerifyPage() {
         if (event === "SIGNED_IN" && session) {
           const role = sessionStorage.getItem("pendingRole");
           
-          if (role === "user") navigate("/user");
+          if (role === "user") navigate("/UserPage");
           else if (role === "owner") navigate("/OwnerPage");
           else navigate("/");
         }

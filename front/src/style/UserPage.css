@@ -1,0 +1,49 @@
+.userpage-container {
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #f9f5f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+}
+
+.userpage-container h2 {
+  margin-bottom: 1.5rem;
+  color: #8B7355;
+}
+
+.userpage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.userpage-form label {
+  text-align: left;
+  font-weight: 500;
+}
+
+.userpage-form input,
+.userpage-form select {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.userpage-form button {
+  padding: 0.8rem;
+  background: #D4AF37;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.userpage-form button:hover {
+  background: #8B7355;
+}

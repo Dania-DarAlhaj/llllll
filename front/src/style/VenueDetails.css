@@ -1,0 +1,69 @@
+.venue-container {
+  display: flex;
+  flex-wrap: wrap; /* يجعل التصميم متجاوب على الشاشات الصغيرة */
+  gap: 30px; /* مسافة بين الصورة والتفاصيل */
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 40px auto; /* يضعه في وسط الصفحة */
+}
+
+.venue-image {
+  flex: 0 0 400px; /* حجم ثابت للصورة */
+  border-radius: 10px;
+  overflow: hidden; /* لتجنب خروج الصورة عن الإطار */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.venue-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.venue-image img:hover {
+  transform: scale(1.05); /* تأثير تكبير بسيط عند المرور */
+}
+
+.venue-details {
+  flex: 1; /* التفاصيل تاخذ المساحة المتبقية */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-family: 'Lato', sans-serif;
+  color: #333;
+}
+
+.venue-details h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.venue-details p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.venue-details p span {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .venue-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .venue-image {
+    width: 100%;
+    flex: none;
+  }
+}
