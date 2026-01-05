@@ -448,6 +448,7 @@ export default function DJPage() {
 
         <button className="chatbot-toggle" onClick={() => setChatOpen(!chatOpen)}>
           {chatOpen ? '✕' : '💬'}
+          
         </button>
       </div>
     </div>

@@ -1022,7 +1022,7 @@ const navigate = useNavigate();
               <li className="nav-item"><a className="nav-link" href="#packages">Packages</a></li>
               <li className="nav-item"><a className="nav-link" href="#how-it-works">How It Works</a></li>
               <li className="nav-item"><a className="nav-link" href="#testimonials">Reviews</a></li>
-              <button className="btn btn-primary-custom" onClick={() => navigate("/login")}>Log in</button>
+          
               {/* زر Login / Logout */}
               <li className="nav-item">
                 <button

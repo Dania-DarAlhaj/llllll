@@ -36,7 +36,26 @@ export default function VenueDetails() {
         setHall(data);
       }
     };
+const currentEmail = sessionStorage.getItem("currentEmail");
+  if (currentEmail) {
+    setEmail(currentEmail);
 
+    // لو عندك جدول users في supabase فيه الاسم و رقم الهاتف
+    const fetchUserData = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("name, phone")
+        .eq("email", currentEmail)
+        .single();
+
+      if (!error && data) {
+        setName(data.name);
+        setPhone(data.phone);
+      }
+    };
+
+    fetchUserData();
+  }
     fetchHall();
   }, [userId]);
 
@@ -52,16 +71,16 @@ export default function VenueDetails() {
           hall_id: hall.id,
           user_name: name,
           user_email: email,
-          user_phone: phone, // تخزين رقم الهاتف
+          user_phone: phone, 
           date: date.toISOString(),
           guests: guests
         }
       ]);
 
     if (error) {
-      setMessage("❌ Error: " + error.message);
+      setMessage(" Error: " + error.message);
     } else {
-      setMessage("✅ Booking successful!");
+      setMessage(" Booking successful!");
       setName("");
       setEmail("");
       setPhone("");
@@ -129,14 +148,7 @@ export default function VenueDetails() {
             />
           </div>
           <div>
-            <label>Number of guests:</label>
-            <input
-              type="number"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value)}
-              required
-              min="1"
-            />
+           
           </div>
           <button type="submit">Book Now</button>
         </form>
